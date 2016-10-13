@@ -166,17 +166,16 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
         FMDatabase *db = [self database];
         block(db);
         
+#if defined(DEBUG) && DEBUG
         if ([db hasOpenResultSets]) {
             NSLog(@"Warning: there is at least one open result set around after performing [FMDatabaseQueue inDatabase:]");
-            
-#if defined(DEBUG) && DEBUG
             NSSet *openSetCopy = FMDBReturnAutoreleased([[db valueForKey:@"_openResultSets"] copy]);
             for (NSValue *rsInWrappedInATastyValueMeal in openSetCopy) {
                 FMResultSet *rs = (FMResultSet *)[rsInWrappedInATastyValueMeal pointerValue];
                 NSLog(@"query: '%@'", [rs query]);
             }
-#endif
         }
+#endif
     });
     
     FMDBRelease(self);
