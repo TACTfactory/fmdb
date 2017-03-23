@@ -118,6 +118,14 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
 #endif
 }
 
+- (void)setLogsErrors:(BOOL)logsErrors {
+    _logsErrors = logsErrors;
+    
+    if (_db) {
+        _db.logsErrors = logsErrors;
+    }
+}
+
 - (void)close {
     FMDBRetain(self);
     dispatch_sync(_queue, ^() {
@@ -166,8 +174,7 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
         FMDatabase *db = [self database];
         block(db);
         
-#if defined(DEBUG) && DEBUG
-        if ([db hasOpenResultSets]) {
+        if (self.logsErrors && [db hasOpenResultSets]) {
             NSLog(@"Warning: there is at least one open result set around after performing [FMDatabaseQueue inDatabase:]");
             NSSet *openSetCopy = FMDBReturnAutoreleased([[db valueForKey:@"_openResultSets"] copy]);
             for (NSValue *rsInWrappedInATastyValueMeal in openSetCopy) {
@@ -175,7 +182,6 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
                 NSLog(@"query: '%@'", [rs query]);
             }
         }
-#endif
     });
     
     FMDBRelease(self);

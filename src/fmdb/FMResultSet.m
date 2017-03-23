@@ -221,7 +221,9 @@
         return [n intValue];
     }
     
-    NSLog(@"Warning: I could not find the column named '%@'.", columnName);
+    if (_parentDB && _parentDB.logsErrors) {
+        NSLog(@"Warning: I could not find the column named '%@'.", columnName);
+    }
     
     return -1;
 }

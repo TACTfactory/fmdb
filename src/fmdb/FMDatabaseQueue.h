@@ -66,6 +66,7 @@
     FMDatabase          *_db;
     int                 _openFlags;
     NSString            *_vfsName;
+    BOOL                _logsErrors;
 }
 
 /** Path of database */
@@ -79,6 +80,10 @@
 /**  Custom virtual file system name */
 
 @property (atomic, copy) NSString *vfsName;
+
+/** Logs errors */
+
+@property (atomic, assign) BOOL logsErrors;
 
 ///----------------------------------------------------
 /// @name Initialization, opening, and closing of queue
